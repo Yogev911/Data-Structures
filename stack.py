@@ -2,13 +2,8 @@ import random
 import string
 import math
 
-BRACKETS = ['(', ')', '{', '}', '[', ']']
+from heap import MaxHeap
 
-
-class ListNode:
-    def __init__(self, x):
-        self.val = x
-        self.next = None
 
 class SmartStack:
     def __init__(self):
@@ -46,6 +41,9 @@ class SmartStack:
     def get_max(self):
         return self._max[-1]
 
+    def pop_max(self):
+        return self._max.pop()
+
 
 class Stack:
     def __init__(self):
@@ -77,7 +75,8 @@ class Stack:
         return self._size
 
 
-def is_valid_brackets(st):
+def balanced_parentheses(st):
+    BRACKETS = ['(', ')', '{', '}', '[', ']']
     stack = Stack()
     try:
         for char in st:
@@ -100,9 +99,10 @@ def is_valid_brackets(st):
         return False
 
 
-def is_valid_brackets2(s):
-    stack = []
+def balanced_parentheses2(s):
+    # no need stack object
     BRACKETS = ['(', ')', '{', '}', '[', ']']
+    stack = []
     for char in s:
         if char in BRACKETS:
             if char == ')':
@@ -134,6 +134,11 @@ def is_valid_brackets2(s):
 
 
 def get_dupes(a):
+    '''
+    split list to duplicates and seen
+    :param a:
+    :return:
+    '''
     seen = {}
     dupes = []
     for x in a:
@@ -146,23 +151,24 @@ def get_dupes(a):
     return dupes, seen
 
 
-def t(strs):
-    i = 0
-
-    if not strs:
-        return ""
-    while True:
-        chars = []
-        for word in strs:
-            if not word:
-                return ""
-            if len(word) > i:
-                chars.append(word[i])
+def lengthOfLongestSubstring(s):
+    '''
+    Given a string, find the length of the longest substring without repeating characters.
+    :param s:
+    :return:
+    '''
+    max_subs = 0
+    for i in range(0, len(s)):
+        d = {}
+        for char in s[i:]:
+            if char not in d:
+                d[char] = None
             else:
-                return word[:i]
-        if len(set(chars)) != 1:
-            return strs[0][:i]
-        i += 1
+                break
+        curr_size = len(d.keys())
+        if curr_size > max_subs:
+            max_subs = curr_size
+    return max_subs
 
 
 def myAtoi(str):
@@ -174,6 +180,9 @@ def myAtoi(str):
     if not str[0].isdigit():
         if str[0] == '-':
             sign = -1
+            str = str[1:]
+        elif str[0] == '+':
+            sign = 1
             str = str[1:]
         else:
             return 0
@@ -189,17 +198,12 @@ def myAtoi(str):
         right_num = stack.pop()
         num += int(right_num) * 10 ** i
         i += 1
-    return num * sign
-
-
-def find_start_char(char, st):
-    '''
-    complex = O(st)
-    '''
-    for i, c in enumerate(st):
-        if c == char:
-            return i
-    return None
+    num = num * sign
+    if -2 ** 31 > num:
+        return -2 ** 31
+    if num > 2 ** 31 - 1:
+        return 2 ** 31 - 1
+    return num
 
 
 def get_common_sub(s1, s2):
@@ -222,6 +226,16 @@ def get_common_sub(s1, s2):
         else:
             continue
     return "".join(stack)
+
+
+def find_start_char(char, st):
+    '''
+    complex = O(N)
+    '''
+    for i, c in enumerate(st):
+        if c == char:
+            return i
+    return None
 
 
 def get_longest_common_sub(s1, s2):
@@ -249,110 +263,96 @@ def get_distance(p1, p2):
     return math.sqrt(abs(p1[0] - p2[0]) ** 2 + abs(p1[1] - p2[1]) ** 2)
 
 
-def get_closest_points(k, points, my_point):
+def get_closest_points(k,my_point, points):
     '''
     Complex = O(N + ) time
     Complex = O(N) space
     '''
     distances = {}
+    s = MaxHeap([])
     for point in points:
         distance = get_distance(point, my_point)
         if distance not in distances:
             distances[distance] = [point]
+            s.push(distance)
         else:
             distances[distance].append(point)
-
-    rel_distance = list(distances.keys())
-    rel_distance.sort()
     ret_points = []
-    for dis in rel_distance:
-        for point in distances[dis]:
-            if k == 0:
-                return ret_points
-            ret_points.append(point)
-            k -= 1
+    while k:
+        ret_points.append(distances[s.pop()])
+        k -= 1
+    return ret_points
+    # rel_distance = list(distances.keys())
+    # rel_distance.sort()
+    #
+    # for dis in rel_distance:
+    #     for point in distances[dis]:
+    #         if k == 0:
+    #             return ret_points
+    #         ret_points.append(point)
+    #         k -= 1
 
 
-def removeNthFromEnd(head, k):
-    try:
-        candidate = eval(f"head{'.next' * k}")
-        if not candidate:
-            candidate = eval(f"head{'.next' * (k - 2)}")
-            candidate = None
-            return head
-    except:
-        return False
-    curr = head
-    pre = curr
-    curr = curr.next
-    while curr.next:
-        try:
-            eval(f"pre{'.next' * k}")
-        except:
-            pre.next = curr.next
-            return head
-        curr = curr.next
-        pre = pre.next
-
-
-def removeNthFromEnd2(head, k):
-    curr = head
-    k_node = curr
-    for _ in range(k):
-        if curr.next:
-            curr = curr.next
+def perform_postfix(st):
+    '''
+    time complex O(N)
+    space complex O(N)
+    perform matematic infix
+    :param st: str ex. '56+6*73+3/-1+'
+    :return: int ex . 64
+    '''
+    signs = {'+': lambda y, x: x + y,
+             '-': lambda y, x: x - y,
+             '/': lambda y, x: x / y,
+             '*': lambda y, x: x * y}
+    s = Stack()
+    for char in st:
+        if char.isdigit():
+            s.push(char)
         else:
-            return head.next
-    return remove_node_element(k_node,curr)
-
-def remove_node_element(k_node,curr):
-    if not curr.next:
-        k_node.next = k_node.next.next
-        return head
-    return remove_node_element(k_node.next,curr.next)
-
-def mergeKLists(lists):
-    if not any(lists):
-        return None
-    min_val, min_val_idx = get_val(lists)
-    head = ListNode(min_val)
-    curr_node = head
-    lists[min_val_idx] = lists[min_val_idx].next
-    while any(lists):
-        min_val, min_val_idx = get_val(lists)
-        curr_node.next = ListNode(min_val)
-        curr_node = curr_node.next
-        lists[min_val_idx] = lists[min_val_idx].next
-    return head
+            s.push(signs[char](int(s.pop()), int(s.pop())))
+    return s.pop()
 
 
-def get_val(lists):
-    min_val = None
-    min_val_idx = None
-    for i, list in enumerate([x for x in lists]):
-        if list is not None:
-            if min_val is None:
-                min_val = list.val
-                min_val_idx = i
-            elif list.val < min_val:
-                min_val = list.val
-                min_val_idx = i
-    return min_val, min_val_idx
+def infix_to_postfix(st):
+    '''
+    time complex O(N)
+    space complex O(N)
+    perform matematic infix
+    :param st: str ex. '(5+6)*6-(7+3)/3+1'
+    :return: str ex . '56+6*73+3/-1+'
+    '''
+    ranks = {'+': 1,
+             '-': 1,
+             '/': 2,
+             '*': 2,
+             '(': 0,
+             ')': 0}
+    s = Stack()
+    postfix = ''
+    for char in st:
+        if char.isdigit():
+            postfix += char
+        else:
+            if s.isEmpty():
+                s.push(char)
+            else:
+                if char == '(':
+                    s.push(char)
+                elif char == ')':
+                    while s.peek() != '(':
+                        postfix += s.pop()
+                    s.pop()
+                elif ranks[s.peek()] < ranks[char]:
+                    s.push(char)
+                else:
+                    while not s.isEmpty():
+                        postfix += s.pop()
+                    s.push(char)
+    while not s.isEmpty():
+        postfix += s.pop()
+    print(perform_postfix(postfix))
 
 
 if __name__ == '__main__':
-    lists = []
-    for i1 in range(0,random.randint(10,11)):
-        head = ListNode(random.randint(0,100))
-        curr = head
-        for i2 in range(0,random.randint(3,5)):
-            curr.next = ListNode(random.randint(0,100))
-            curr = curr.next
-        lists.append(head)
-
-    print(lists)
-    x = mergeKLists(lists)
-    print('******************')
-    while x:
-        print(x.val)
-        x = x.next
+    get_closest_points(5,(4,7),[(random.randint(1,10),random.randint(1,10)) for i in range(10)])

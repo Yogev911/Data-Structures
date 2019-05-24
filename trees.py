@@ -1,5 +1,8 @@
 import math
+import random
 from random import randint
+
+from tests import timer
 
 
 class Node(object):
@@ -28,19 +31,15 @@ def insert(root, val):
             insert(root.left, val)
 
 
-def contains(root, val):
-    if val == root.val:
-        return True
+def get_rank(root, val):
+    if not root:
+        raise ValueError(f"val {val} is not found in tree")
+    if root.val == val:
+        return 0
     if val > root.val:
-        if not root.right:
-            return False
-        else:
-            return contains(root.right, val)
-    else:
-        if not root.left:
-            return False
-        else:
-            return contains(root.left, val)
+        return 1 + get_rank(root.right, val)
+    if val < root.val:
+        return 1 + get_rank(root.left, val)
 
 
 def get_parent(child):
@@ -56,6 +55,17 @@ def get_parent(child):
     return left if left else right
 
 
+def preorder_print(root):
+    if root:
+        print(root.val)
+    else:
+        return
+    if root.left:
+        preorder_print(root.left)
+    if root.right:
+        preorder_print(root.right)
+
+
 def inorder_print(root):
     if root.left:
         inorder_print(root.left)
@@ -64,39 +74,50 @@ def inorder_print(root):
         inorder_print(root.right)
 
 
-def get_k_biggest(root, k):
-    def append_preorder(root, arr, k):
-        if len(arr) == k:
-            return
-        if root.right:
-            append_preorder(root.right, arr, k)
-        arr.append(root.val)
-        if root.left:
-            append_preorder(root.left, arr, k)
-
-    arr = []
-    append_preorder(root, arr, k)
-    return arr[-1]
+def postorder_print(root):
+    if not root:
+        return
+    if root.left:
+        postorder_print(root.left)
+    if root.right:
+        postorder_print(root.right)
+    print(root.val)
 
 
-def get_k_smallest(root, k):
-    def append_inorder(root, arr, k):
-        if len(arr) == k:
-            return
-        if root.left:
-            append_inorder(root.left, arr, k)
-        arr.append(root.val)
-        if root.right:
-            append_inorder(root.right, arr, k)
-
-    arr = []
-    append_inorder(root, arr, k)
-    return arr[-1]
+def get_k_biggest(root, arr, k):
+    if len(arr) >= k:
+        print(arr[k - 1])
+        return
+    if root.right:
+        get_k_biggest(root.right, arr, k)
+    arr.append(root.val)
+    if root.left:
+        get_k_biggest(root.left, arr, k)
 
 
-# Lowest Common Ancestor Binary Tree
+def get_k_smallest(root, arr, k):
+    if len(arr) >= k:
+        print(arr[k - 1])
+        return
+    if root.left:
+        get_k_smallest(root.left, arr, k)
+    arr.append(root.val)
+    if root.right:
+        get_k_smallest(root.right, arr, k)
+
+
+def find_k_element2(root, k, arr):
+    if root.right:
+        find_k_element2(root.right, k, arr)
+    arr.append(root.val)
+    if len(arr) == k:
+        return
+    if root.left:
+        find_k_element2(root.left, k, arr)
+
 
 def LCA(root, a, b):
+    # Lowest Common Ancestor Binary Tree
     if root is None:
         return None
     if root.val == a or root.val == b:
@@ -109,9 +130,7 @@ def LCA(root, a, b):
 
 
 def find_depth(root):
-    if not root:
-        return 0
-    return max(find_depth(root.left), find_depth(root.right)) + 1
+    return max(find_depth(root.left), find_depth(root.right)) + 1 if root else 0
 
 
 def is_balanced(root):
@@ -128,8 +147,60 @@ def is_balanced(root):
     return 1 + max(right, left)
 
 
+def contains(root, val):
+    if not root:
+        return False
+    if root.val == val:
+        return True
+    if val > root.val:
+        return contains(root.right, val)
+    if val < root.val:
+        return contains(root.left, val)
+
+
+def tree2str(t):
+    if not t:
+        return ""
+    if not t.left and not t.right:
+        return str(t.val)
+    left = tree2str(t.left)
+    right = tree2str(t.right)
+    if right == '':
+        return f"{t.val}({left})"
+    else:
+        return f"{t.val}({left})({right})"
+
+
+def str2tree(s):
+    root = Node(s[0])
+    s = s[1:]
+
+    if s == '':
+        return
+
+
 if __name__ == '__main__':
-    root = Node(10)
-    for _ in range(0, 20):
-        insert(root, randint(0, 20))
-    print(get_k_biggest(root, 3))
+    pass
+    # arr = [-500, -300, -200, -100, 0, 1, 2, 3, 4, 5, 6, 10, 11, 13, 45, 78, 9999]
+    # print(fixed_point(int(len(arr) / 2), arr, {}))
+    #
+    root = Node(5)
+    for _ in range(1, 10):
+        insert(root, random.randint(1,10))
+    inorder_print(root)
+    print('^^^^^^^^^')
+    preorder_print(root)
+    print('^^^^^^^^^')
+    postorder_print(root)
+    print('')
+    # print(contains2(root, 999))
+    # print(get_rank(root, 9999))
+    # print(arr)
+    # print(contains2(root,11))
+    # insert(root, 15)
+    # insert(root, 13)
+    # insert(root, 2)
+    # insert(root, 5)
+
+    # print(is_balanced(root))
+    # print(get_k_biggest(root, 3))
