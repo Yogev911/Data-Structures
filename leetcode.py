@@ -52,13 +52,17 @@ def addTwoNumbers(l1: ListNode, l2: ListNode) -> ListNode:
             val += l2.val
             l2 = l2.next
 
-        current.next = ListNode(val=val%10)
+        current.next = ListNode(val=val % 10)
         current = current.next
 
         val //= 10
     if val:
         current.next = ListNode(val=val)
     return head
+
+
+def lengthOfLongestSubstring(s: str) -> int:
+    pass
 
 
 if __name__ == '__main__':
