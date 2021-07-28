@@ -183,8 +183,31 @@ def convert(s: str, numRows: int) -> str:
         st += mat[i]
     return st
 
+@printer
+def reverse(x: int) -> int:
+    """
+    7.
+    Given a signed 32-bit integer x, return x with its digits reversed. If reversing x causes the value to go outside the signed 32-bit integer range [-231, 231 - 1], then return 0.
+    Assume the environment does not allow you to store 64-bit integers (signed or unsigned).
+    """
+    sign = 1 if x > 0 else -1
+    x *= sign
+    powers = 0
+    ret_val = 0
+    while x // pow(10, powers):
+        powers += 1
+    for i in range(powers-1,-1,-1):
+        num = x % 10
+        x //= 10
+        ret_val += num * pow(10, i)
+    ret_val *= sign
+    if not (-1*pow(2,31) <= ret_val <= 1*pow(2,31) - 2):
+        return 0
+    return ret_val
+
 
 if __name__ == '__main__':
+    reverse(1234689)
     findMedianSortedArrays([1, 2], [3, 4])
     lengthOfLongestSubstring("aabaab!bb")
     twoSum([10, 5, 10, 7, 5, 6, 6, 3, 4, 4, 8, 3, 4, 5, 6, 0], 3)
