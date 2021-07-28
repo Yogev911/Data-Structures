@@ -1,4 +1,5 @@
 import random
+import string
 
 from typing import List
 
@@ -61,11 +62,30 @@ def addTwoNumbers(l1: ListNode, l2: ListNode) -> ListNode:
     return head
 
 
+@printer
 def lengthOfLongestSubstring(s: str) -> int:
-    pass
+    '''
+    Given a string s, find the length of the longest substring without repeating characters.
+    '''
+    max_subset = 0
+    h_map = {}
+    start_index = 0
+    for end_index in range(len(s)):
+        if s[end_index] not in h_map:
+            h_map[s[end_index]] = end_index
+        else:
+            if h_map[s[end_index]] < start_index:
+                h_map[s[end_index]] = end_index
+            else:
+                start_index = h_map[s[end_index]] + 1
+                h_map[s[end_index]] = end_index
+        max_subset = max(max_subset, end_index - start_index + 1)
+    return max_subset
 
 
 if __name__ == '__main__':
     generated_list = [random.randint(0, 10) for _ in range(0, random.randint(0, 100))]
     generated_num = random.randint(1, random.randint(2, 10))
+    generated_string = ''.join(random.choice(string.ascii_uppercase) for _ in range(30))
     twoSum([10, 5, 10, 7, 5, 6, 6, 3, 4, 4, 8, 3, 4, 5, 6, 0], 3)
+    lengthOfLongestSubstring("aabaab!bb")
