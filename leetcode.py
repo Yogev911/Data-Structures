@@ -151,6 +151,39 @@ def longestPalindrome(s: str) -> str:
     return max_length
 
 
+def convert(s: str, numRows: int) -> str:
+    """
+    6.
+    The string "PAYPALISHIRING" is written in a zigzag pattern on a given number of rows like this: (you may want to display this pattern in a fixed font for better legibility)
+    P   A   H   N
+    A P L S I I G
+    Y   I   R
+    And then read line by line: "PAHNAPLSIIGYIR"
+    Write the code that will take a string and make this conversion given a number of rows
+    """
+    if numRows == 1 or len(s) <= numRows:
+        return s
+    row = 0
+    up = True
+    st = ''
+    mat = {}
+    for char in s:
+        if row == numRows - 1:
+            up = False
+        elif row == 0:
+            up = True
+        if row not in mat:
+            mat[row] = ''
+        mat[row] += char
+        if up:
+            row += 1
+        else:
+            row -= 1
+    for i in range(numRows):
+        st += mat[i]
+    return st
+
+
 if __name__ == '__main__':
     findMedianSortedArrays([1, 2], [3, 4])
     lengthOfLongestSubstring("aabaab!bb")
