@@ -116,11 +116,42 @@ def findMedianSortedArrays(nums1: List[int], nums2: List[int]) -> float:
     l = len(unified_arr)
     print(unified_arr)
     if l % 2 == 1:
-        return unified_arr[l//2]
+        return unified_arr[l // 2]
     return (unified_arr[(l - 1) // 2] + unified_arr[l // 2]) / 2
 
 
+def longestPalindrome(s: str) -> str:
+    """
+    5.
+    Given a string s, return the longest palindromic substring in s.
+    """
+
+    def expand(s, i, j):
+        counter = j - i + 1
+        i -= 1
+        j += 1
+        while i >= 0 and j < len(s):
+            if s[i] == s[j]:
+                counter += 2
+                i -= 1
+                j += 1
+            else:
+                return s[i + 1:j]
+        return s[i + 1:j]
+
+    if len(s) == 1:
+        return s[0]
+    max_length = ""
+    for start in range(len(s) - 1):
+        if s[start] == s[start + 1]:
+            length = expand(s, start, start + 1)
+            max_length = max_length if len(max_length) > len(length) else length
+        length = expand(s, start, start)
+        max_length = max_length if len(max_length) > len(length) else length
+    return max_length
+
+
 if __name__ == '__main__':
-    findMedianSortedArrays([1,2], [3,4])
+    findMedianSortedArrays([1, 2], [3, 4])
     lengthOfLongestSubstring("aabaab!bb")
     twoSum([10, 5, 10, 7, 5, 6, 6, 3, 4, 4, 8, 3, 4, 5, 6, 0], 3)
