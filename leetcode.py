@@ -42,8 +42,23 @@ def addTwoNumbers(l1: ListNode, l2: ListNode) -> ListNode:
     You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order, and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list.
     You may assume the two numbers do not contain any leading zero, except the number 0 itself.
     '''
-    # baby you are cute
-    return ListNode()
+    head = current = ListNode()
+    val = 0
+    while l1 or l2:
+        if l1:
+            val += l1.val
+            l1 = l1.next
+        if l2:
+            val += l2.val
+            l2 = l2.next
+
+        current.next = ListNode(val=val%10)
+        current = current.next
+
+        val //= 10
+    if val:
+        current.next = ListNode(val=val)
+    return head
 
 
 if __name__ == '__main__':
