@@ -242,9 +242,48 @@ def myAtoi(s: str) -> int:
     return ret
 
 
+@printer
+def isPalindrome(x: int) -> bool:
+    """
+    9.
+    Given an integer x, return true if x is palindrome integer.
+    An integer is a palindrome when it reads the same backward as forward. For example, 121 is palindrome while 123 is not.
+    """
+    if x < 0:
+        return False
+    s = str(x)
+    le = len(s)
+    if le == 1:
+        return True
+    if le == 2:
+        return s[0] == s[1]
+    end = s[le // 2:] if le % 2 == 0 else s[le // 2 + 1:]
+    return s[:le // 2][::-1] == end
+
+
+def maxArea(height: List[int]) -> int:
+    """
+    11.
+    Given n non-negative integers a1, a2, ..., an , where each represents a point at coordinate (i, ai).
+    n vertical lines are drawn such that the two endpoints of the line i is at (i, ai) and (i, 0).
+    Find two lines, which, together with the x-axis forms a container, such that the container contains the most water.
+    """
+    current = 0
+    j = len(height) - 1
+    i = 0
+    while i != j:
+        current = max(current, (j - i) * min(height[i], height[j]))
+        if height[i] > height[j]:
+            j -= 1
+        else:
+            i += 1
+    return current
+
+
 if __name__ == '__main__':
-    myAtoi("21474836460")
-    reverse(1234689)
-    findMedianSortedArrays([1, 2], [3, 4])
-    lengthOfLongestSubstring("aabaab!bb")
-    twoSum([10, 5, 10, 7, 5, 6, 6, 3, 4, 4, 8, 3, 4, 5, 6, 0], 3)
+    isPalindrome(1)
+    # myAtoi("21474836460")
+    # reverse(1234689)
+    # findMedianSortedArrays([1, 2], [3, 4])
+    # lengthOfLongestSubstring("aabaab!bb")
+    # twoSum([10, 5, 10, 7, 5, 6, 6, 3, 4, 4, 8, 3, 4, 5, 6, 0], 3)
