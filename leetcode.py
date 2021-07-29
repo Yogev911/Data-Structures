@@ -183,6 +183,7 @@ def convert(s: str, numRows: int) -> str:
         st += mat[i]
     return st
 
+
 @printer
 def reverse(x: int) -> int:
     """
@@ -196,17 +197,53 @@ def reverse(x: int) -> int:
     ret_val = 0
     while x // pow(10, powers):
         powers += 1
-    for i in range(powers-1,-1,-1):
+    for i in range(powers - 1, -1, -1):
         num = x % 10
         x //= 10
         ret_val += num * pow(10, i)
     ret_val *= sign
-    if not (-1*pow(2,31) <= ret_val <= 1*pow(2,31) - 2):
+    if not (-1 * pow(2, 31) <= ret_val <= 1 * pow(2, 31) - 2):
         return 0
     return ret_val
 
 
+@printer
+def myAtoi(s: str) -> int:
+    """
+    8.
+    Implement the myAtoi(string s) function, which converts a string to a 32-bit signed integer (similar to C/C++'s atoi function).
+    """
+    if not s:
+        return 0
+    sign = 1
+    num = 0
+    start_index = 0
+    for i in range(len(s)):
+        if s[i] == ' ':
+            continue
+        if s[i] == '-' or s[i] == '+':
+            sign = [1, -1][s[i] == '-']
+            start_index = i + 1
+            break
+        start_index = i
+        break
+
+    for i in range(start_index, len(s)):
+        if not s[i].isdigit():
+            break
+        if s[i] == '0' and num == 0:
+            continue
+        num = num * 10 + int(s[i])
+    ret = num * sign
+    if ret < -2 ** 31:
+        return -2 ** 31
+    if ret > 2 ** 31 - 1:
+        return 2 ** 31 - 1
+    return ret
+
+
 if __name__ == '__main__':
+    myAtoi("21474836460")
     reverse(1234689)
     findMedianSortedArrays([1, 2], [3, 4])
     lengthOfLongestSubstring("aabaab!bb")
