@@ -280,6 +280,28 @@ def maxArea(height: List[int]) -> int:
     return current
 
 
+def detectCapitalUse(word: str) -> bool:
+    """
+    520. Detect Capital  - Easy
+    We define the usage of capitals in a word to be right when one of the following cases holds:
+    All letters in this word are capitals, like "USA".
+    All letters in this word are not capitals, like "leetcode".
+    Only the first letter in this word is capital, like "Google".
+    Given a string word, return true if the usage of capitals in it is right.
+    """
+    if len(word) == 1:
+        return True
+    first_char = word[0].isupper()
+    count_upper = int(first_char)
+    for char in word[1:]:
+        count_upper += int(char.isupper())
+    if count_upper == len(word):
+        return True
+    if int(first_char) == count_upper:
+        return True
+    return False
+
+
 if __name__ == '__main__':
     isPalindrome(1)
     # myAtoi("21474836460")
