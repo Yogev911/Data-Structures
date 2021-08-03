@@ -1,5 +1,6 @@
 import random
 import string
+from collections import defaultdict
 
 from typing import List
 
@@ -302,8 +303,39 @@ def detectCapitalUse(word: str) -> bool:
     return False
 
 
+@printer
+def areSentencesSimilar(sentence1: str, sentence2: str) -> bool:
+    """
+    1813. Sentence Similarity III - Medium
+    A sentence is a list of words that are separated by a single space with no leading or trailing spaces. For example, "Hello World", "HELLO", "hello world hello world" are all sentences. Words consist of only uppercase and lowercase English letters.
+    Two sentences sentence1 and sentence2 are similar if it is possible to insert an arbitrary sentence (possibly empty) inside one of these sentences such that the two sentences become equal. For example, sentence1 = "Hello my name is Jane" and sentence2 = "Hello Jane" can be made equal by inserting "my name is" between "Hello" and "Jane" in sentence2.
+    Given two sentences sentence1 and sentence2, return true if sentence1 and sentence2 are similar. Otherwise, return false.
+    """
+    sentence1 = sentence1.split(' ')
+    sentence2 = sentence2.split(' ')
+    if len(sentence1) < len(sentence2):
+        sentence1, sentence2 = sentence2, sentence1
+
+    while sentence2:
+        if sentence1[-1] == sentence2[-1]:
+            sentence1.pop()
+            sentence2.pop()
+        else:
+            break
+    sentence1 = sentence1[::-1]
+    sentence2 = sentence2[::-1]
+    while sentence2:
+        if sentence1[-1] == sentence2[-1]:
+            sentence1.pop()
+            sentence2.pop()
+        else:
+            break
+    return not bool(len(sentence2))
+
+
 if __name__ == '__main__':
-    isPalindrome(1)
+    pass
+    # isPalindrome(1)
     # myAtoi("21474836460")
     # reverse(1234689)
     # findMedianSortedArrays([1, 2], [3, 4])
