@@ -333,8 +333,28 @@ def areSentencesSimilar(sentence1: str, sentence2: str) -> bool:
     return not bool(len(sentence2))
 
 
+@printer
+def binaryGap(n: int) -> int:
+    """
+    868. Binary Gap - Easy
+    Given a positive integer n, find and return the longest distance between any two adjacent 1's in the binary representation of n. If there are no two adjacent 1's, return 0.
+    Two 1's are adjacent if there are only 0's separating them (possibly no 0's). The distance between two 1's is the absolute difference between their bit positions. For example, the two 1's in "1001" have a distance of 3.
+    """
+    bin_num = bin(n)[2:]
+    bin_num = [int(x) for x in bin_num]
+    count = 0
+    max_count = 0
+    for num in bin_num[1:]:
+        count += 1
+        if num == 1:
+            max_count = max(count, max_count)
+            count = 0
+
+    return max_count
+
+
 if __name__ == '__main__':
-    pass
+    binaryGap(15)
     # isPalindrome(1)
     # myAtoi("21474836460")
     # reverse(1234689)
