@@ -353,6 +353,17 @@ def binaryGap(n: int) -> int:
     return max_count
 
 
+def addDigits(num: int) -> int:
+    """
+    258. Add Digits - Easy
+    Given an integer num, repeatedly add all its digits until the result has only one digit, and return it.
+    """
+    while num > 9:
+        digits = [int(x) for x in str(num)]
+        num = sum(digits)
+    return num
+
+
 if __name__ == '__main__':
     binaryGap(15)
     # isPalindrome(1)
